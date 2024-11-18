@@ -1,0 +1,14 @@
+---
+import DropZone from "@components/DropZone.astro";
+import Layout from "@layouts/Layout.astro";
+---
+
+<Layout title="Subir imagen">
+  <div
+    class="min-h-screen flex pt-32 justify-center dark:bg-gray-900 transition-colors duration-200"
+  >
+    <div class="w-full max-w-2xl">
+      <DropZone />
+    </div>
+  </div>
+</Layout>
