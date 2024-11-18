@@ -1,54 +1,100 @@
-# Astro Starter Kit: Basics
+# Image Gallery with Cloudinary
 
-```sh
-npm create astro@latest -- --template basics
+A modern web application built with Astro and Cloudinary for managing and displaying images. Features dark/light theme support and drag-and-drop image uploads.
+
+![alt text](public/image.png)
+
+## 🚀 Features
+
+- Image gallery with responsive grid layout
+- Drag-and-drop file upload interface
+- Dark/light theme support with system preference detection
+- Cloudinary integration for image storage and optimization
+- TypeScript support for improved development experience
+
+## 🛠️ Tech Stack
+
+- [Astro](https://astro.build/) - Web framework
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Cloudinary](https://cloudinary.com/) - Image storage and optimization
+- TypeScript - Type safety and development experience
+
+## 📦 Project Structure
+
 ```
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
-├── public/
-│   └── favicon.svg
 ├── src/
 │   ├── components/
-│   │   └── Card.astro
+│   │   ├── DropZone.astro
+│   │   ├── GalleryImage.astro
+│   │   └── ThemeToggle.astro
 │   ├── layouts/
 │   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── libs/
+│   │   ├── dropZone.ts
+│   │   ├── fileHandlers.ts
+│   │   └── imagePreview.ts
+│   ├── pages/
+│   │   ├── index.astro
+│   │   └── upload.astro
+│   └── types/
+│       ├── image.ts
+│       └── uploadResult.ts
+└── public/
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🔧 Setup
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+1. Install dependencies:
 
-Any static assets, like images, can be placed in the `public/` directory.
+```bash
+npm install
+```
 
-## 🧞 Commands
+2. Configure environment variables:
 
-All commands are run from the root of the project, from a terminal:
+```env
+CLOUDINARY_CLOUDNAME=your_cloud_name
+CLOUDINARY_APIKEY=your_api_key
+CLOUDINARY_APISECRET=your_api_secret
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+3. Run development server:
 
-## 👀 Want to learn more?
+```bash
+npm run dev
+```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 📝 Usage
+
+1. Access the gallery at the root URL (`/`)
+2. Upload images via the upload page (`/upload`)
+   - Drag and drop images or click to select files
+   - Support for multiple image upload
+   - Directory upload support
+3. Toggle between dark/light themes using the theme button
+
+## 🏗️ Build
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+## 📄 API Endpoints
+
+- `GET /api/search` - Retrieve gallery images
+- `POST /api/upload` - Upload new images to Cloudinary
+
+## 🔑 Key Components
+
+- `DropZone` - Handles file upload interface and image preview
+- `GalleryImage` - Displays uploaded images in a responsive grid
+- `ThemeToggle` - Manages theme switching functionality
