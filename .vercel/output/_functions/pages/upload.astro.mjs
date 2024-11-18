@@ -13,6 +13,7 @@ Subir imágenes
 </button> </form> `;
 }, "D:/dev/galleryImageSD/src/components/DropZone.astro", void 0);
 
+const prerender = true;
 const $$Upload = createComponent(($$result, $$props, $$slots) => {
   return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Subir imagen" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="min-h-screen flex pt-32 justify-center dark:bg-gray-900 transition-colors duration-200"> <div class="w-full max-w-2xl"> ${renderComponent($$result2, "DropZone", $$DropZone, {})} </div> </div> ` })}`;
 }, "D:/dev/galleryImageSD/src/pages/upload.astro", void 0);
@@ -24,6 +25,7 @@ const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: $$Upload,
   file: $$file,
+  prerender,
   url: $$url
 }, Symbol.toStringTag, { value: 'Module' }));
 

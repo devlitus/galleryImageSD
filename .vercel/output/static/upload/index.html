@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="UTF-8"><meta name="description" content="Astro description"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v4.16.13"><title>Subir imagen</title><script>
+      if (
+        typeof localStorage !== "undefined" &&
+        localStorage.getItem("theme")
+      ) {
+        document.documentElement.classList.add(localStorage.getItem("theme"));
+      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+      } else {
+        document.documentElement.classList.add("light");
+        localStorage.setItem("theme", "light");
+      }
+    </script><link rel="stylesheet" href="/_astro/index.I3W-Zeya.css"><script type="module" src="/_astro/hoisted.Cp99LFyw.js"></script></head> <body class="min-h-screen"> <header class="bg-white dark:bg-gray-900 transition-colors duration-200"> <div class="flex justify-end p-4 items-center"> <a class="text-white mr-5" href="/">Gallery</a> <!-- Uncomment the following line to enable the upload feature --> <!-- <a class="text-white mr-5" href="/upload">Upload</a> --> <button id="themeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"> <span id="themeIcon" class="block w-6 h-6"> <svg xmlns="http://www.w3.org/2000/svg" class="hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg xmlns="http://www.w3.org/2000/svg" class="block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </span> </button> </div> </header>   <div class="min-h-screen flex pt-32 justify-center dark:bg-gray-900 transition-colors duration-200"> <div class="w-full max-w-2xl"> <form id="uploadForm" class="w-full"> <div id="dropZone" class="w-full min-h-[300px] flex flex-col justify-center text-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"> <div class="drop-zone__prompt flex items-center flex-col gap-4"> <p class="text-gray-600 dark:text-gray-300">
+Arrastra y suelta imágenes aquí
+</p> <p class="text-gray-500 dark:text-gray-400">o</p> <button type="button" id="selectFiles" class="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+Seleccionar archivos
+</button> </div> <input type="file" id="fileInput" class="hidden" accept="image/*" multiple> <div id="preview" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full mt-6"></div> </div> <button type="submit" class="w-full mt-4 px-6 py-3 bg-green-600 dark:bg-green-500 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" id="submitButton" disabled>
+Subir imágenes
+</button> </form>  </div> </div>  </body></html>
