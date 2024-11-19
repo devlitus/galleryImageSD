@@ -28,7 +28,6 @@ export class DropZoneHandler {
 
     this.initializeEventListeners();
     this.updateSubmitButtonState();
-    this.updateSubmitButtonState();
   }
 
   private initializeEventListeners(): void {
@@ -144,7 +143,8 @@ export class DropZoneHandler {
       }
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Error al subir las imágenes");
+      const errorMessage = (error as Error).message;
+      alert(`Error al subir las imágenes (${errorMessage})`);
     } finally {
       this.submitButton.disabled = false;
       this.submitButton.textContent = "Subir imágenes";

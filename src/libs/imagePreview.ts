@@ -22,7 +22,7 @@ export class ImagePreview {
 
   private createImageContainer(file: File, imageUrl: string): HTMLElement {
     const container = document.createElement("div");
-    container.className = "relative group";
+    container.className = "relative group px-4 pb-4";
 
     const img = document.createElement("img");
     img.src = imageUrl;
