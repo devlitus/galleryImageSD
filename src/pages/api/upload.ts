@@ -41,7 +41,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     const result = await cloudinary.uploader.upload(dataUrl, {
       ...UPLOAD_OPTIONS,
-      public_id: `image-${Date.now()}`,
     });
 
     return new Response(JSON.stringify(result), {
