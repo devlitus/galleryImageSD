@@ -1,11 +1,6 @@
 import type { APIRoute } from "astro";
-import {
-  v2 as cloudinary,
-  type UploadApiOptions,
-  type UploadApiResponse,
-} from "cloudinary";
+import { v2 as cloudinary, type UploadApiOptions } from "cloudinary";
 
-// Definir las opciones de subida fuera de la función principal
 const UPLOAD_OPTIONS: UploadApiOptions = {
   folder: "imageSD",
   allowed_formats: ["jpg", "jpeg", "png"],
@@ -15,32 +10,24 @@ const UPLOAD_OPTIONS: UploadApiOptions = {
   type: "upload",
 };
 
-// Función auxiliar para manejar errores
-const handleUploadError = (error: unknown) => {
-  if (!(error instanceof Error)) {
-    return { message: "Error desconocido", status: 500 };
+const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+  const CHUNK_SIZE = 8192; // 8KB chunks
+  const uint8Array = new Uint8Array(buffer);
+  let binary = "";
+
+  for (let i = 0; i < uint8Array.length; i += CHUNK_SIZE) {
+    const chunk = uint8Array.slice(
+      i,
+      Math.min(i + CHUNK_SIZE, uint8Array.length)
+    );
+    binary += String.fromCharCode.apply(null, Array.from(chunk));
   }
 
-  const { message } = error;
-
-  switch (true) {
-    case message.includes("Maximum call stack size exceeded"):
-      return {
-        message: "La imagen es demasiado grande para procesarla",
-        status: 413,
-      };
-    case message.includes("timeout"):
-      return { message: "La subida tardó demasiado tiempo", status: 408 };
-    case message.includes("network"):
-      return { message: "Error de red al subir la imagen", status: 503 };
-    default:
-      return { message: "Error al subir la imagen", status: 500 };
-  }
+  return btoa(binary);
 };
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    // Configurar Cloudinary
     cloudinary.config({
       cloud_name: import.meta.env.CLOUDINARY_CLOUDNAME,
       api_key: import.meta.env.CLOUDINARY_APIKEY,
@@ -49,22 +36,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     const file = await request.blob();
     const arrayBuffer = await file.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const base64String = arrayBufferToBase64(arrayBuffer);
+    const dataUrl = `data:${file.type};base64,${base64String}`;
 
-    // Usar async/await con una promesa más limpia
-    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          ...UPLOAD_OPTIONS,
-          public_id: `image-${Date.now()}`,
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result as UploadApiResponse);
-        }
-      );
-
-      uploadStream.end(uint8Array);
+    const result = await cloudinary.uploader.upload(dataUrl, {
+      ...UPLOAD_OPTIONS,
+      public_id: `image-${Date.now()}`,
     });
 
     return new Response(JSON.stringify(result), {
@@ -75,15 +52,14 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
   } catch (error) {
-    const { message, status } = handleUploadError(error);
-
+    console.error("Upload error:", error);
     return new Response(
       JSON.stringify({
-        error: message,
+        error: "Error al subir la imagen",
         details: error instanceof Error ? error.message : "Unknown error",
       }),
       {
-        status,
+        status: 500,
         headers: { "Content-Type": "application/json" },
       }
     );
