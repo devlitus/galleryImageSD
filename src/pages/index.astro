@@ -9,15 +9,4 @@ import GalleryImage from "@components/GalleryImage.astro";
       <GalleryImage />
     </div>
   </main>
-  <button id="error-button">Throw test error</button>
 </Layout>
-
-<script>
-  const errorButton = document.querySelector(
-    "#error-button"
-  ) as HTMLButtonElement;
-  function handleClick() {
-    throw new Error("This is a test error");
-  }
-  errorButton.addEventListener("click", handleClick);
-</script>
