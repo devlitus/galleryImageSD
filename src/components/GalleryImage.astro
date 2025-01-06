@@ -11,7 +11,6 @@ cloudinary.config({
 const result = await cloudinary.search
   .expression("folder:imageSD")
   .sort_by("public_id", "desc")
-  .max_results(30)
   .execute();
 
 const { resources } = result;
