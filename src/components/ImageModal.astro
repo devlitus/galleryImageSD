@@ -1,0 +1,199 @@
+---
+
+---
+
+<div
+  id="imageModal"
+  class="fixed inset-0 z-50 hidden bg-black bg-opacity-90 items-center justify-center"
+>
+  <div class="relative w-full h-full flex flex-col items-center justify-center">
+    <button
+      id="closeModal"
+      class="absolute top-4 right-4 bg-white bg-opacity-20 rounded-full p-2 text-white hover:bg-opacity-30 transition-all z-10"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <button
+      id="prevImage"
+      class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 rounded-full p-2 text-white hover:bg-opacity-30 transition-all"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <button
+      id="nextImage"
+      class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 rounded-full p-2 text-white hover:bg-opacity-30 transition-all"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+
+    <div class="w-full h-full flex items-center justify-center p-4">
+      <img
+        id="modalImage"
+        src=""
+        alt="Imagen ampliada"
+        class="max-h-full max-w-full object-contain"
+      />
+    </div>
+  </div>
+</div>
+
+<script>
+  class ImageModalHandler {
+    private modal: HTMLElement;
+    private modalImage: HTMLImageElement;
+    private closeBtn: HTMLElement;
+    private prevBtn: HTMLElement;
+    private nextBtn: HTMLElement;
+    private currentIndex: number = 0;
+    private imageUrls: string[] = [];
+    private imageAlts: string[] = [];
+
+    constructor() {
+      this.modal = document.getElementById("imageModal") as HTMLElement;
+      this.modalImage = document.getElementById(
+        "modalImage"
+      ) as HTMLImageElement;
+      this.closeBtn = document.getElementById("closeModal") as HTMLElement;
+      this.prevBtn = document.getElementById("prevImage") as HTMLElement;
+      this.nextBtn = document.getElementById("nextImage") as HTMLElement;
+
+      this.initEventListeners();
+    }
+
+    private initEventListeners() {
+      this.closeBtn.addEventListener("click", () => this.closeModal());
+      this.modal.addEventListener("click", (e) => {
+        if (e.target === this.modal) {
+          this.closeModal();
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (!this.modal.classList.contains("hidden")) {
+          if (e.key === "Escape") {
+            this.closeModal();
+          } else if (e.key === "ArrowLeft") {
+            this.showPrevImage();
+          } else if (e.key === "ArrowRight") {
+            this.showNextImage();
+          }
+        }
+      });
+
+      // Navigation buttons
+      this.prevBtn.addEventListener("click", () => this.showPrevImage());
+      this.nextBtn.addEventListener("click", () => this.showNextImage());
+
+      // Set up gallery image click handlers
+      this.setupGalleryImages();
+    }
+
+    private setupGalleryImages() {
+      const galleryImages = document.querySelectorAll(
+        ".gallery-image"
+      ) as NodeListOf<HTMLImageElement>;
+
+      // Store all image URLs and alt texts
+      galleryImages.forEach((img, index) => {
+        this.imageUrls.push(img.src);
+        this.imageAlts.push(img.alt);
+
+        // Add click event to each image
+        img.addEventListener("click", () => {
+          this.openModal(index);
+        });
+      });
+
+      // Update navigation button visibility
+      this.updateNavButtons();
+    }
+
+    private openModal(index: number) {
+      if (index >= 0 && index < this.imageUrls.length) {
+        this.currentIndex = index;
+        this.modalImage.src = this.imageUrls[index];
+        this.modalImage.alt = this.imageAlts[index];
+        this.modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden"; // Prevent scrolling
+        this.updateNavButtons();
+      }
+    }
+
+    private closeModal() {
+      this.modal.classList.add("hidden");
+      document.body.style.overflow = ""; // Restore scrolling
+    }
+
+    private showPrevImage() {
+      if (this.currentIndex > 0) {
+        this.openModal(this.currentIndex - 1);
+      }
+    }
+
+    private showNextImage() {
+      if (this.currentIndex < this.imageUrls.length - 1) {
+        this.openModal(this.currentIndex + 1);
+      }
+    }
+
+    private updateNavButtons() {
+      // Hide prev button if at first image
+      if (this.currentIndex === 0) {
+        this.prevBtn.classList.add("opacity-50", "pointer-events-none");
+      } else {
+        this.prevBtn.classList.remove("opacity-50", "pointer-events-none");
+      }
+
+      // Hide next button if at last image
+      if (this.currentIndex === this.imageUrls.length - 1) {
+        this.nextBtn.classList.add("opacity-50", "pointer-events-none");
+      } else {
+        this.nextBtn.classList.remove("opacity-50", "pointer-events-none");
+      }
+    }
+  }
+
+  // Initialize modal handler when DOM is loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    const modalHandler = new ImageModalHandler();
+  });
+</script>

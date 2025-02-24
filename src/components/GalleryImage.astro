@@ -1,6 +1,7 @@
 ---
 import type { Image } from "../types/image.ts";
 import { v2 as cloudinary } from "cloudinary";
+import ImageModal from "./ImageModal.astro";
 
 cloudinary.config({
   cloud_name: import.meta.env.CLOUDINARY_CLOUDNAME,
@@ -24,10 +25,16 @@ const { resources } = result;
   >
     {
       resources.map(({ secure_url, filename }: Image) => (
-        <div class="break-inside-avoid">
-          <img src={secure_url} alt={filename} class="w-full rounded-lg" />
+        <div class="break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity">
+          <img
+            src={secure_url}
+            alt={filename}
+            class="w-full rounded-lg gallery-image"
+          />
         </div>
       ))
     }
   </div>
+
+  <ImageModal />
 </div>
