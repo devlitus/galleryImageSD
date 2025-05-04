@@ -2,11 +2,16 @@
 import type { Image } from "../types/image.ts";
 import { v2 as cloudinary } from "cloudinary";
 import ImageModal from "./ImageModal.astro";
+import {
+  CLOUDINARY_APIKEY,
+  CLOUDINARY_APISECRET,
+  CLOUDINARY_CLOUDNAME,
+} from "src/constants/constanst";
 
 cloudinary.config({
-  cloud_name: import.meta.env.CLOUDINARY_CLOUDNAME,
-  api_key: import.meta.env.CLOUDINARY_APIKEY,
-  api_secret: import.meta.env.CLOUDINARY_APISECRET,
+  cloud_name: CLOUDINARY_CLOUDNAME,
+  api_key: CLOUDINARY_APIKEY,
+  api_secret: CLOUDINARY_APISECRET,
 });
 
 const result = await cloudinary.search
