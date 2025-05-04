@@ -12,11 +12,13 @@ cloudinary.config({
   cloud_name: CLOUDINARY_CLOUDNAME,
   api_key: CLOUDINARY_APIKEY,
   api_secret: CLOUDINARY_APISECRET,
+  secure: true,
 });
-
+const LIMIT = 1000; // Set the limit to 1000 images
 const result = await cloudinary.search
   .expression("folder:imageSD")
   .sort_by("public_id", "desc")
+  .max_results(LIMIT)
   .execute();
 
 const { resources } = result;
@@ -35,6 +37,7 @@ const { resources } = result;
             src={secure_url}
             alt={filename}
             class="w-full rounded-lg gallery-image"
+            loading="lazy"
           />
         </div>
       ))
