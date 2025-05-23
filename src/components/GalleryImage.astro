@@ -1,5 +1,6 @@
 ---
 import type { Image } from "../types/image.ts";
+import FavoriteIcon from "./FavoriteIcon.astro";
 import ImageModal from "./ImageModal.astro";
 
 let resources: Image[] = [];
@@ -42,22 +43,19 @@ try {
     class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 max-w-4xl mx-auto p-4 space-y-4"
   >
     {
-      resources.length > 0 ? (
-        resources.map(({ secure_url, filename, public_id }: Image) => (
-          <div class="break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity">
-            <img
-              src={secure_url}
-              alt={filename || public_id}
-              class="w-full rounded-lg gallery-image"
-              loading="lazy"
-            />
+      resources.map(({ secure_url, filename }: Image) => (
+        <div class="relative break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity">
+          <img
+            src={secure_url}
+            alt={filename}
+            class="w-full rounded-lg gallery-image"
+            loading="lazy"
+          />
+          <div class="absolute bottom-2 right-2">
+            <FavoriteIcon />
           </div>
-        ))
-      ) : !fetchError ? (
-        <p class="text-center text-gray-500 dark:text-gray-400 col-span-full">
-          No images found.
-        </p>
-      ) : null
+        </div>
+      ))
     }
   </div>
 
