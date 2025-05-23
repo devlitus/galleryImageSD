@@ -7,12 +7,13 @@ export const GET: APIRoute = async () => {
       cloud_name: import.meta.env.CLOUDINARY_CLOUDNAME,
       api_key: import.meta.env.CLOUDINARY_APIKEY,
       api_secret: import.meta.env.CLOUDINARY_APISECRET,
+      secure: true,
     });
 
     const result = await cloudinary.search
       .expression("folder:imageSD")
       .sort_by("public_id", "desc")
-      .max_results(30)
+      .max_results(500)
       .execute();
 
     return new Response(JSON.stringify(result), {
