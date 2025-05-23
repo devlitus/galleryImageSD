@@ -32,6 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
       cloud_name: import.meta.env.CLOUDINARY_CLOUDNAME,
       api_key: import.meta.env.CLOUDINARY_APIKEY,
       api_secret: import.meta.env.CLOUDINARY_APISECRET,
+      secure: true,
     });
 
     const file = await request.blob();
