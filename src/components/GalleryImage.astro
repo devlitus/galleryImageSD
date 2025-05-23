@@ -2,7 +2,7 @@
 import type { Image } from "../types/image.ts";
 import { v2 as cloudinary } from "cloudinary";
 import ImageModal from "./ImageModal.astro";
-import FavoriteIcon from './FavoriteIcon.astro';
+import FavoriteIcon from "./FavoriteIcon.astro";
 import {
   CLOUDINARY_APIKEY,
   CLOUDINARY_APISECRET,
@@ -40,7 +40,7 @@ const { resources } = result;
             class="w-full rounded-lg gallery-image"
             loading="lazy"
           />
-          <div class="absolute top-2 right-2">
+          <div class="absolute bottom-2 right-2">
             <FavoriteIcon />
           </div>
         </div>

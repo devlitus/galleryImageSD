@@ -1,19 +1,69 @@
----
-// No server-side JavaScript needed for this component
----
-<button aria-label="Add to favorites" class="focus:outline-none">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" class="text-gray-400 transition-colors duration-200 ease-in-out">
-        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-    </svg>
+<button id="favorite-btn" aria-label="Add to favorites" class="p-1.5 focus:outline-none z-10">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    width="16px"
+    height="16px"
+    class="heart-icon transition-all duration-300"
+  >
+    <path
+      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+    ></path>
+  </svg>
 </button>
 
-<script>
-    const button = document.querySelector('button[aria-label="Add to favorites"]');
-    const svg = button.querySelector('svg');
+<style>
+  .heart-icon {
+    fill: #d1d5db;
+  }
+  
+  .heart-icon:hover {
+    transform: scale(1.1);
+  }
+  
+  .heart-icon.active {
+    fill: #e63946; 
+  }
+  
+  .heart-icon.heartbeat {
+    animation: heartbeat 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+</style>
 
-    button.addEventListener('click', () => {
-        const isFavorited = svg.classList.toggle('text-yellow-400');
-        svg.classList.toggle('text-gray-400', !isFavorited);
-        button.setAttribute('aria-label', isFavorited ? 'Remove from favorites' : 'Add to favorites');
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('#favorite-btn');
+    
+    buttons.forEach(button => {
+      const icon = button.querySelector('.heart-icon');
+      
+      // Si no encontramos el icono, no hacemos nada
+      if (!icon) return;
+      
+      // TypeScript: asegurar que icon es un elemento SVG
+      const svgIcon = icon as SVGElement;
+      
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        svgIcon.classList.toggle('active');
+        svgIcon.classList.add('heartbeat');
+        
+        // Actualizar el aria-label
+        const isActive = svgIcon.classList.contains('active');
+        button.setAttribute('aria-label', isActive ? 'Remove from favorites' : 'Add to favorites');
+        
+        // Quitar la animación después de que termine
+        setTimeout(() => {
+          svgIcon.classList.remove('heartbeat');
+        }, 500);
+      });
     });
+  });
 </script>
+
