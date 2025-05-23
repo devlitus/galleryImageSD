@@ -2,6 +2,7 @@
 import type { Image } from "../types/image.ts";
 import { v2 as cloudinary } from "cloudinary";
 import ImageModal from "./ImageModal.astro";
+import FavoriteIcon from './FavoriteIcon.astro';
 import {
   CLOUDINARY_APIKEY,
   CLOUDINARY_APISECRET,
@@ -32,13 +33,16 @@ const { resources } = result;
   >
     {
       resources.map(({ secure_url, filename }: Image) => (
-        <div class="break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity">
+        <div class="relative break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity">
           <img
             src={secure_url}
             alt={filename}
             class="w-full rounded-lg gallery-image"
             loading="lazy"
           />
+          <div class="absolute top-2 right-2">
+            <FavoriteIcon />
+          </div>
         </div>
       ))
     }

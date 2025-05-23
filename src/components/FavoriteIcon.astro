@@ -1,0 +1,19 @@
+---
+// No server-side JavaScript needed for this component
+---
+<button aria-label="Add to favorites" class="focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" class="text-gray-400 transition-colors duration-200 ease-in-out">
+        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+    </svg>
+</button>
+
+<script>
+    const button = document.querySelector('button[aria-label="Add to favorites"]');
+    const svg = button.querySelector('svg');
+
+    button.addEventListener('click', () => {
+        const isFavorited = svg.classList.toggle('text-yellow-400');
+        svg.classList.toggle('text-gray-400', !isFavorited);
+        button.setAttribute('aria-label', isFavorited ? 'Remove from favorites' : 'Add to favorites');
+    });
+</script>
