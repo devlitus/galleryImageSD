@@ -1,5 +1,8 @@
 import type { APIRoute } from "astro";
 import { v2 as cloudinary, type UploadApiOptions } from "cloudinary";
+import { CLOUDINARY_APIKEY, CLOUDINARY_APISECRET, CLOUDINARY_CLOUDNAME } from "src/constants/constanst";
+
+
 
 const UPLOAD_OPTIONS: UploadApiOptions = {
   folder: "imageSD",
@@ -29,9 +32,9 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
 export const POST: APIRoute = async ({ request }) => {
   try {
     cloudinary.config({
-      cloud_name: import.meta.env.CLOUDINARY_CLOUDNAME,
-      api_key: import.meta.env.CLOUDINARY_APIKEY,
-      api_secret: import.meta.env.CLOUDINARY_APISECRET,
+      cloud_name: CLOUDINARY_CLOUDNAME,
+      api_key: CLOUDINARY_APIKEY,
+      api_secret: CLOUDINARY_APISECRET,
       secure: true,
     });
 
