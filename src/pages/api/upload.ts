@@ -49,9 +49,9 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     cloudinary.config({
-      cloud_name: cloudName, // Usar las variables leídas aquí
-      api_key: apiKey,       // Usar las variables leídas aquí
-      api_secret: apiSecret, // Usar las variables leídas aquí
+      cloud_name: CLOUDINARY_CLOUDNAME,
+      api_key: CLOUDINARY_APIKEY,
+      api_secret: CLOUDINARY_APISECRET,
       secure: true,
     });
 
