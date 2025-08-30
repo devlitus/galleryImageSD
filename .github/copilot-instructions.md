@@ -53,3 +53,9 @@
 - **Variables and Functions:** Use camelCase.
 - **CSS Classes:** Use kebab-case or Tailwind utility classes.
 - **Props:** Use camelCase.
+
+### Documentation
+
+- Integrate in Notion use mcp
+- Document components, props, and utilities in Notion.
+- Create a task use Notion in the page Kanban - Galería de imágenes
