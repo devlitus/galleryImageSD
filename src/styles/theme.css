@@ -1,0 +1,18 @@
+@theme {
+  --color-background-dark: #101623;
+  --color-surface-dark: #1f2937;
+  --color-primary: #f97316;
+  --color-secondary: #eab308;
+  --color-accent: #ef4444;
+  --color-text-on-dark: #e5e7eb;
+  --color-text-on-light: #111827;
+
+  /* Puedes añadir más tokens de diseño aquí, como espaciado, fuentes, etc. */
+  /* Por ejemplo:
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --font-body: Inter, sans-serif;
+  --font-heading: Montserrat, sans-serif;
+  */
+}

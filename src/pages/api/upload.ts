@@ -1,8 +1,7 @@
+export const prerender = false;
 import type { APIRoute } from "astro";
 import { v2 as cloudinary, type UploadApiOptions } from "cloudinary";
 import { CLOUDINARY_APIKEY, CLOUDINARY_APISECRET, CLOUDINARY_CLOUDNAME } from "src/constants/constanst";
-
-
 
 const UPLOAD_OPTIONS: UploadApiOptions = {
   folder: "imageSD",
@@ -31,6 +30,24 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    const apiKey = import.meta.env.CLOUDINARY_APIKEY;
+    const apiSecret = import.meta.env.CLOUDINARY_APISECRET;
+    const cloudName = import.meta.env.CLOUDINARY_CLOUDNAME;
+
+    if (!apiKey || !apiSecret || !cloudName) {
+      console.error("Una o más variables de entorno de Cloudinary no están configuradas.");
+      return new Response(
+        JSON.stringify({
+          error: "Error de configuración del servidor",
+          details: "Faltan variables de entorno de Cloudinary.",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     cloudinary.config({
       cloud_name: CLOUDINARY_CLOUDNAME,
       api_key: CLOUDINARY_APIKEY,

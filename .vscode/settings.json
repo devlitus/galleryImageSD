@@ -1,8 +1,6 @@
 {
-  "cSpell.words": [
-    "APIKEY",
-    "APISECRET",
-    "Cloudinary",
-    "CLOUDNAME"
-  ]
+  "cSpell.words": ["APIKEY", "APISECRET", "Cloudinary", "CLOUDNAME"],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }
