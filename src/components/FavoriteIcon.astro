@@ -1,14 +1,13 @@
-<button 
-  id="favorite-btn" 
-  aria-label="Add to favorites" 
-  class="p-1.5 focus:outline-none z-10 group"
+<button
+  aria-label="Add to favorites"
+  class="favorite-btn p-1.5 focus:outline-none z-10 group"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="16px"
     height="16px"
-    class="fill-gray-300 group-hover:scale-110 group-hover:fill-red-300 transition-all duration-300 ease-in-out group-data-[favorite=true]:fill-red-500 group-data-[animating=true]:scale-125"
+    class="pointer-events-none fill-gray-300 group-hover:scale-110 group-hover:fill-red-300 transition-all duration-300 ease-in-out group-data-[favorite=true]:fill-red-500 group-data-[animating=true]:scale-125"
   >
     <path
       d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
@@ -17,24 +16,25 @@
 </button>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('#favorite-btn').forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        
-        const isFavorite = button.getAttribute('data-favorite') === 'true';
-        button.setAttribute('data-favorite', isFavorite ? 'false' : 'true');
-        
-        button.setAttribute('aria-label', 
-          isFavorite ? 'Add to favorites' : 'Remove from favorites'
-        );
-        
-        if (!isFavorite) {
-          button.setAttribute('data-animating', 'true');
-          setTimeout(() => button.removeAttribute('data-animating'), 300);
-        }
-      });
-    });
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    const button = target.closest(".favorite-btn");
+
+    if (button) {
+      e.stopPropagation();
+
+      const isFavorite = button.getAttribute("data-favorite") === "true";
+      button.setAttribute("data-favorite", isFavorite ? "false" : "true");
+
+      button.setAttribute(
+        "aria-label",
+        isFavorite ? "Add to favorites" : "Remove from favorites",
+      );
+
+      if (!isFavorite) {
+        button.setAttribute("data-animating", "true");
+        setTimeout(() => button.removeAttribute("data-animating"), 300);
+      }
+    }
   });
 </script>
-

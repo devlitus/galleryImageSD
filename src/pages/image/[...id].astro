@@ -1,0 +1,79 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { getOptimizedUrl } from "../../utils/imageUtils";
+import {
+  CLOUDINARY_APIKEY,
+  CLOUDINARY_APISECRET,
+  CLOUDINARY_CLOUDNAME,
+} from "src/constants/constanst";
+import { v2 as cloudinary } from "cloudinary";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/");
+}
+
+// Reconstruct the public ID properly even if it had slashes which are handled by [...id]
+// Astro params for [...id] return the full path segment
+const public_id = id;
+
+// Fetch image details to get dimensions for aspect ratio and exact URL
+// We need this because we want to use the same 'secure_url' base and dimensions
+let imageDetails = null;
+
+try {
+  cloudinary.config({
+    cloud_name: CLOUDINARY_CLOUDNAME,
+    api_key: CLOUDINARY_APIKEY,
+    api_secret: CLOUDINARY_APISECRET,
+    secure: true,
+  });
+
+  imageDetails = await cloudinary.api.resource(public_id);
+} catch (error) {
+  console.error("Error fetching resource:", error);
+  // Fallback or 404
+  return Astro.redirect("/404");
+}
+
+const { secure_url, width, height } = imageDetails;
+---
+
+<Layout title={`Imagen ${public_id}`}>
+  <main class="min-h-screen bg-black flex items-center justify-center relative">
+    <a
+      href="/"
+      class="absolute top-4 left-4 text-white hover:text-gray-300 z-50 bg-black/50 p-2 rounded-full transition-colors"
+      aria-label="Volver a la galería"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </a>
+
+    <div class="w-full h-full p-4 flex items-center justify-center">
+      <img
+        src={getOptimizedUrl(secure_url, 1280)}
+        srcset={`${getOptimizedUrl(secure_url, 640)} 640w, ${getOptimizedUrl(secure_url, 1280)} 1280w, ${getOptimizedUrl(secure_url, 1920)} 1920w`}
+        sizes="100vw"
+        width={width}
+        height={height}
+        alt={public_id}
+        class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+        transition:name={`image-${public_id}`}
+      />
+    </div>
+  </main>
+</Layout>

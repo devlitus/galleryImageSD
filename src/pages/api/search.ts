@@ -2,8 +2,10 @@ import type { APIRoute } from "astro";
 import { v2 as cloudinary } from "cloudinary";
 import { CLOUDINARY_APIKEY, CLOUDINARY_APISECRET, CLOUDINARY_CLOUDNAME } from "src/constants/constanst";
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url }) => {
   try {
+    const cursor = url.searchParams.get("cursor");
+
     cloudinary.config({
       cloud_name: CLOUDINARY_CLOUDNAME,
       api_key: CLOUDINARY_APIKEY,
@@ -11,11 +13,16 @@ export const GET: APIRoute = async () => {
       secure: true,
     });
 
-    const result = await cloudinary.search
+    const searchExpression = cloudinary.search
       .expression("folder:imageSD")
       .sort_by("public_id", "desc")
-      .max_results(500)
-      .execute();
+      .max_results(20);
+
+    if (cursor) {
+      searchExpression.next_cursor(cursor);
+    }
+
+    const result = await searchExpression.execute();
 
     return new Response(JSON.stringify(result), {
       status: 200,

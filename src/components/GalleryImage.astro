@@ -1,10 +1,11 @@
 ---
 import type { Image } from "../types/image.ts";
 import FavoriteIcon from "./FavoriteIcon.astro";
-import ImageModal from "./ImageModal.astro";
+import { getOptimizedUrl, getSrcSet, GRID_SIZES } from "../utils/imageUtils";
 
 let resources: Image[] = [];
 let fetchError: string | null = null;
+let data: any = null;
 try {
   const response = await fetch(`${Astro.url.origin}/api/search`);
 
@@ -12,7 +13,7 @@ try {
     throw new Error(`API responded with status: ${response.status}`);
   }
 
-  const data = await response.json();
+  data = await response.json();
 
   if (data && data.resources) {
     resources = data.resources;
@@ -26,6 +27,8 @@ try {
     error instanceof Error ? error.message : "An unknown error occurred";
   resources = [];
 }
+
+const initialNextCursor = typeof data !== "undefined" ? data.next_cursor : null;
 ---
 
 <div
@@ -40,24 +43,166 @@ try {
   }
 
   <div
+    id="gallery-grid"
     class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 max-w-4xl mx-auto p-4 space-y-4"
   >
     {
-      resources.map(({ secure_url, filename }: Image) => (
-        <div class="relative break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity">
-          <img
-            src={secure_url}
-            alt={filename}
-            class="w-full rounded-lg gallery-image"
-            loading="lazy"
-          />
-          <div class="absolute bottom-2 right-2">
-            <FavoriteIcon />
-          </div>
-        </div>
-      ))
+      resources.map(
+        ({ secure_url, filename, width, height, public_id }: Image) => (
+          <a
+            href={`/image/${public_id}`}
+            class="block relative break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity"
+          >
+            <div
+              class="relative w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800 animate-pulse"
+              style={`aspect-ratio: ${width} / ${height};`}
+            >
+              <img
+                src={getOptimizedUrl(secure_url, 640)}
+                srcset={getSrcSet(secure_url)}
+                sizes={GRID_SIZES}
+                width={width}
+                height={height}
+                alt={filename}
+                class="w-full h-full object-cover gallery-image opacity-0 transition-opacity duration-500"
+                style={`aspect-ratio: ${width} / ${height};`}
+                loading="lazy"
+                onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('animate-pulse');"
+                transition:name={`image-${public_id}`}
+              />
+            </div>
+            <div class="absolute bottom-2 right-2 z-10">
+              <FavoriteIcon />
+            </div>
+          </a>
+        ),
+      )
     }
   </div>
 
-  <ImageModal />
+  <div id="sentinel" class="w-full h-20 flex items-center justify-center">
+    <div
+      id="loading-spinner"
+      class="hidden animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"
+    >
+    </div>
+  </div>
 </div>
+
+<script define:vars={{ initialNextCursor }}>
+  let nextCursor = initialNextCursor;
+  let isLoading = false;
+  const galleryGrid = document.getElementById("gallery-grid");
+  const sentinel = document.getElementById("sentinel");
+  const loadingSpinner = document.getElementById("loading-spinner");
+
+  const observer = new IntersectionObserver(
+    async (entries) => {
+      if (entries[0].isIntersecting && nextCursor && !isLoading) {
+        await loadMoreImages();
+      }
+    },
+    { rootMargin: "200px" },
+  );
+
+  if (sentinel) {
+    observer.observe(sentinel);
+  }
+
+  async function loadMoreImages() {
+    if (isLoading || !nextCursor) return;
+
+    isLoading = true;
+    loadingSpinner?.classList.remove("hidden");
+
+    try {
+      const response = await fetch(`/api/search?cursor=${nextCursor}`);
+
+      if (!response.ok) throw new Error("Failed to fetch");
+
+      const data = await response.json();
+      nextCursor = data.next_cursor || null;
+
+      const newImagesHtml = data.resources
+        .map((img) => createImageCard(img))
+        .join("");
+      galleryGrid.insertAdjacentHTML("beforeend", newImagesHtml);
+
+      // Dispatch event to notify components about new content
+      window.dispatchEvent(new Event("gallery-updated"));
+    } catch (error) {
+      console.error("Error loading more images:", error);
+    } finally {
+      isLoading = false;
+      loadingSpinner?.classList.add("hidden");
+
+      if (!nextCursor && sentinel) {
+        observer.unobserve(sentinel);
+        sentinel.innerHTML =
+          '<p class="text-gray-500 dark:text-gray-400">No more images</p>';
+      }
+    }
+  }
+
+  function getOptimizedUrl(url, width) {
+    if (!url.includes("cloudinary.com")) return url;
+    const transformation = ["f_auto", "q_auto", "c_limit"];
+    if (width) transformation.push(`w_${width}`);
+    const parts = url.split("/upload/");
+    if (parts.length !== 2) return url;
+    return `${parts[0]}/upload/${transformation.join(",")}/${parts[1]}`;
+  }
+
+  function getSrcSet(url) {
+    const widths = [640, 768, 1024, 1280, 1536];
+    return widths.map((w) => `${getOptimizedUrl(url, w)} ${w}w`).join(", ");
+  }
+
+  const GRID_SIZES =
+    "(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw";
+
+  function createImageCard(img) {
+    // This template MUST match the server-side render exactly
+    return `
+      <a 
+        href="/image/${img.public_id}"
+        class="block relative break-inside-avoid mb-4 cursor-pointer hover:opacity-90 transition-opacity"
+      >
+        <div class="relative w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800 animate-pulse" style="aspect-ratio: ${img.width} / ${img.height};">
+          <img
+            src="${getOptimizedUrl(img.secure_url, 640)}"
+            srcset="${getSrcSet(img.secure_url)}"
+            sizes="${GRID_SIZES}"
+            width="${img.width}"
+            height="${img.height}"
+            alt="${img.filename}"
+            class="w-full h-full object-cover gallery-image opacity-0 transition-opacity duration-500"
+            style="aspect-ratio: ${img.width} / ${img.height};"
+            loading="lazy"
+            onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('animate-pulse');"
+            style="view-transition-name: image-${img.public_id}"
+          />
+        </div>
+        <div class="absolute bottom-2 right-2 z-10">
+            <!-- Reusing the SVG structure directly since we can't easily invoke the Astro component from JS -->
+             <button 
+              aria-label="Add to favorites" 
+              class="favorite-btn p-1.5 focus:outline-none z-10 group"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="16px"
+                height="16px"
+                class="pointer-events-none fill-gray-300 group-hover:scale-110 group-hover:fill-red-300 transition-all duration-300 ease-in-out group-data-[favorite=true]:fill-red-500 group-data-[animating=true]:scale-125"
+              >
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                ></path>
+              </svg>
+            </button>
+        </div>
+      </a>
+    `;
+  }
+</script>
