@@ -26,13 +26,19 @@ export const GET: APIRoute = async ({ url }) => {
 
     return new Response(JSON.stringify(result), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+      },
     });
   } catch (error) {
     console.error("Search error:", error);
     return new Response(JSON.stringify({ error: (error as Error).message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+      },
     });
   }
 };
