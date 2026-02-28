@@ -6,7 +6,6 @@ export class DropZoneHandler {
   private fileInput: HTMLInputElement;
   private preview: ImagePreview;
   private submitButton: HTMLButtonElement;
-  private container: HTMLElement;
 
   constructor(
     dropZoneId: string,
@@ -24,7 +23,6 @@ export class DropZoneHandler {
     this.preview = new ImagePreview(previewElement, () =>
       this.updateSubmitButtonState()
     );
-    this.container = previewElement;
 
     this.initializeEventListeners();
     this.updateSubmitButtonState();
